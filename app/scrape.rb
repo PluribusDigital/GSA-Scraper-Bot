@@ -1,15 +1,9 @@
-require 'selenium-webdriver'
-require 'capybara'
-require 'byebug'
-# require launchy
+require_relative 'browser.rb'
 
 duns = "927755033"
-
 results = {}
 
-Capybara.default_max_wait_time = 5
-
-session = Capybara::Session.new(:selenium)
+session = Browser.new(:headless_chrome)
 
 session.visit "https://www.sam.gov/portal/SAM/"
 session.find_all('a[title="Search Records"]').first.click
