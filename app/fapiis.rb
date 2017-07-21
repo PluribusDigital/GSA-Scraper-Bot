@@ -11,6 +11,7 @@ session.click_button "Search"
 
 print session.body
 
+
 # session.find_all('a[title="Search Records"]').first.click
 #
 # # fill out search form
