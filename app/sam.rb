@@ -5,7 +5,7 @@ class SamScraper
     # duns = "927755033"
     results = {}
 
-    session = Browser.new(:headless_chrome)
+    session = Browser.new(:chrome)
 
     session.visit "https://www.sam.gov/portal/SAM/"
     session.find_all('a[title="Search Records"]').first.click
@@ -28,10 +28,28 @@ class SamScraper
     sub_start = html_content.index("<b>Registration Status:</b>") + 27
     sub_end   = html_content.index("<br><b>Activation Date") - 1
     substring = html_content[sub_start..sub_end].delete("\n").delete("\t").delete('&nbsp\;')
+
+    name_start = html_content.index("<b>Name:&nbsp\;</b>") + 18
+    name_end = html_content.index("<br><b>Doing Business") - 1
+    name_substring = html_content[name_start..name_end]
+
+    output = OpenStruct.new(date:Time.now)
+    output.directory = "test_output/runs/#{output.date.strftime('%Y%m%d_%H%M%S')}"
+    FileUtils.mkdir_p(output.directory) unless File.directory?(output.directory)
+
+    output.current_sc = OpenStruct.new(screenshots:[])
+    screenshot_filename = Time.now.strftime('%H%M%S%L') + ".png"
+    session.save_screenshot output.directory + "/" + screenshot_filename
+    output.current_sc.screenshots << screenshot_filename
     # Store data
+
+    results['SAM_company_name'] = {}
     results['SAM_registration_status'] = {}
+
+    results['SAM_company_name']['Name'] = name_substring
+    results['SAM_company_name']['screenshot_filename'] = screenshot_filename
     results['SAM_registration_status']['data'] = substring
-    results['SAM_registration_status']['screenshot_filename'] = "sam.png"
+    results['SAM_registration_status']['screenshot_filename'] = screenshot_filename
 
     return results
 

@@ -1,46 +1,32 @@
-require_relative 'browser.rb'
+class FapiisScraper
+  require_relative 'browser.rb'
 
-duns = "927755033"
-results = {}
+  def self.scrape(duns)
+    # duns = "927755033"
+    results = {}
 
-session = Browser.new(:headless_chrome)
+    session = Browser.new(:chrome)
 
-session.visit "https://www.fapiis.gov/fapiis/index.action"
-session.fill_in "searchduns", with: duns
-session.click_button "Search"
+    session.visit "https://www.fapiis.gov/fapiis/index.action"
+    session.fill_in 'DUNS/Plus4', with: duns
+    session.click_button "Search"
 
-print session.body
+    output = OpenStruct.new(date:Time.now)
+    output.directory = "test_output/runs/#{output.date.strftime('%Y%m%d_%H%M%S')}"
+    FileUtils.mkdir_p(output.directory) unless File.directory?(output.directory)
 
+    output.current_sc = OpenStruct.new(screenshots:[])
+    screenshot_filename = Time.now.strftime('%H%M%S%L') + ".png"
+    session.save_screenshot output.directory + "/" + screenshot_filename
+    output.current_sc.screenshots << screenshot_filename
 
-# session.find_all('a[title="Search Records"]').first.click
-#
-# # fill out search form
-# session.fill_in "DUNS Number Search", with: duns
-# session.click_button "Search"
-#
-# # open up company record
-# # ASSUMPTION: we will only get one valid hit when searching on DUNS
-# sleep 3
-# detail_link = session.find('input[value="View Details"]')
-# detail_link.click
-#
-# # Find Registration Status (within Registration Summary)
-# # Note xpath "../.." selects parent of parent
-# registration_summary_div = session.find('h4', text: "Entity Registration Summary").find(:xpath, '../..')
-# html_content = registration_summary_div.find('div.portlet-content')['innerHTML']
-# # regex = /<b>Registration Status:<\/b>(.*)<br><b>Activation/
-# sub_start = html_content.index("<b>Registration Status:</b>") + 27
-# sub_end   = html_content.index("<br><b>Activation Date") - 1
-# substring = html_content[sub_start..sub_end].delete("\n").delete("\t").delete('&nbsp\;')
-# # Store data
-# results['SAM_registration_status'] = {}
-# results['SAM_registration_status']['data'] = substring
-#
-# # grab screenshot
-# # ...
-# # save screenshot example: https://github.com/MSOL-Inc/FDIC-LIX/blob/develop/acceptance_tests/features/support/hooks.rb#L22
-# # results['SAM_registration_status']['screenshot'] = filename #TBD!
-#
-# # byebug
+    fapiis_data = session.find_all('tr[class="altrow1"]').first.find(:xpath,'..')
+    issues_recorded = fapiis_data.text.include?('Yes')
 
-puts results
+    results['fapiis_data'] = {}
+    results['fapiis_data']['Issues Recorded'] = issues_recorded
+    results['fapiis_data']['screenshot_filename'] = screenshot_filename
+
+    return results
+  end
+end
