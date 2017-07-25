@@ -1,0 +1,37 @@
+<% if @results %>
+<div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+      <h1 align="center">
+        Results
+      </h1>
+      <br>
+        <table style="width:100%">
+          <tr>
+            <th>Company Name</th>
+            <td><%=@results['SAM_company_name']['Name']%></td>
+            <td><%=@results['SAM_company_name']['screenshot_filename']%></td>
+          </tr>
+          <tr>
+            <th>Registration Status</th>
+            <td><%=@results['SAM_registration_status']['data']%></td>
+            <td><%=@results['SAM_registration_status']['screenshot_filename']%></td>
+          </tr>
+          <tr>
+            <th>Active Exclusion Records</th>
+            <td><%=@results['SAM_exclusion_record']['active_records']%></td>
+            <td><%=@results['SAM_exclusion_record']['screenshot_filename']%></td>
+          </tr>
+          <tr>
+            <th>Issues Recorded</th>
+            <td><%=@results['fapiis_data']['Issues Recorded']%></td>
+            <td><%=@results['fapiis_data']['screenshot_filename']%></td>
+          </tr>
+        </table>
+        <img src="/<%=@duns%>/<%=@results['SAM_company_name']['screenshot_filename']%>" style="float:bottom;width:350px;height:350px;" />
+        <img src="/<%=@duns%>/<%=@results['fapiis_data']['screenshot_filename']%>" style="float:bottom;width:350px;height:350px;" />
+    </div>
+  </div>
+</div>
+
+<% end # if @results %>

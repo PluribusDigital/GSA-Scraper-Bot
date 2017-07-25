@@ -12,11 +12,11 @@ class FapiisScraper
     session.click_button "Search"
 
     output = OpenStruct.new(date:Time.now)
-    output.directory = "test_output/runs/#{output.date.strftime('%Y%m%d_%H%M%S')}"
+    output.directory = "screenshots/duns/#{duns}"
     FileUtils.mkdir_p(output.directory) unless File.directory?(output.directory)
 
     output.current_sc = OpenStruct.new(screenshots:[])
-    screenshot_filename = Time.now.strftime('%H%M%S%L') + ".png"
+    screenshot_filename =  "fapiis.png"
     session.save_screenshot output.directory + "/" + screenshot_filename
     output.current_sc.screenshots << screenshot_filename
 
