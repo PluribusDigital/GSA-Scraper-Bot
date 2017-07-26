@@ -2,7 +2,6 @@ class SamScraper
   require_relative 'browser.rb'
 
   def self.scrape(duns)
-    # duns = "927755033"
     results = {}
 
     session = Browser.new(:chrome)
@@ -14,21 +13,18 @@ class SamScraper
     session.fill_in "DUNS Number Search", with: duns
     session.click_button "Search"
 
-    # open up company record
-    # ASSUMPTION: we will only get one valid hit when searching on DUNS
+    #Opens up company Records
     sleep 3
     detail_link = session.find('input[value="View Details"]')
     detail_link.click
 
-    # Find Registration Status (within Registration Summary)
-    # Note xpath "../.." selects parent of parent
+    # Find Data
     registration_summary_div = session.find('h4', text: "Entity Registration Summary").find(:xpath, '../..')
     html_content = registration_summary_div.find('div.portlet-content')['innerHTML']
 
     exclusion_summary_div = session.find('h4', text: "Exclusion Summary").find(:xpath, '../..')
     exclusion_html = exclusion_summary_div.find('div.portlet-content')['innerHTML']
 
-    # regex = /<b>Registration Status:<\/b>(.*)<br><b>Activation/
     sub_start = html_content.index("<b>Registration Status:</b>") + 27
     sub_end   = html_content.index("<br><b>Activation Date") - 1
     substring = html_content[sub_start..sub_end].delete("\n").delete("\t").delete('&nbsp\;')
@@ -41,6 +37,7 @@ class SamScraper
     exclusion_end = exclusion_html.index("<br>") - 1
     exclusion_substring = exclusion_html[exclusion_start..exclusion_end]
 
+    # Saves screenshot and creates/saves to directory
     output = OpenStruct.new(date:Time.now)
     output.directory = "screenshots/duns/#{duns}"
     FileUtils.mkdir_p(output.directory) unless File.directory?(output.directory)
@@ -49,8 +46,8 @@ class SamScraper
     screenshot_filename = "SAM.png"
     session.save_screenshot output.directory + "/" + screenshot_filename
     output.current_sc.screenshots << screenshot_filename
-    # Store data
 
+    # Store data
     results['SAM_company_name'] = {}
     results['SAM_registration_status'] = {}
     results['SAM_exclusion_record'] = {}

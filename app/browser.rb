@@ -5,8 +5,6 @@ class Browser
   require 'byebug'
 
   def self.set_config
-    # configure chrome driver
-    # See also: https://robots.thoughtbot.com/headless-feature-specs-with-chrome
     Capybara.register_driver :chrome do |app|
       Capybara::Selenium::Driver.new(app, browser: :chrome)
     end

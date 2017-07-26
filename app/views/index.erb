@@ -5,6 +5,7 @@
       <h1 align="center">
         Results
       </h1>
+      <h5 align="center">DUNS Number: <%=@duns%></h5>
       <br>
         <table style="width:100%">
           <tr>
@@ -28,8 +29,9 @@
             <td><%=@results['fapiis_data']['screenshot_filename']%></td>
           </tr>
         </table>
-        <img src="/<%=@duns%>/<%=@results['SAM_company_name']['screenshot_filename']%>" style="float:bottom;width:350px;height:350px;" />
-        <img src="/<%=@duns%>/<%=@results['fapiis_data']['screenshot_filename']%>" style="float:bottom;width:350px;height:350px;" />
+        <br>
+        <p><img src="/<%=@duns%>/<%=@results['SAM_company_name']['screenshot_filename']%>" style="float:bottom;width:350px;height:350px;" /> (<%=@results['SAM_company_name']['screenshot_filename']%>)</p>
+        <p><img src="/<%=@duns%>/<%=@results['fapiis_data']['screenshot_filename']%>" style="float:bottom;width:350px;height:350px;" />(<%=@results['fapiis_data']['screenshot_filename']%>)</p>
     </div>
   </div>
 </div>

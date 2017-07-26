@@ -2,7 +2,6 @@ class FpdsScraper
   require_relative 'browser.rb'
 
   def self.scrape(duns)
-    # text = 'duns'
     Capybara.register_driver :chrome do |app|
       prefs = {
         download: {

@@ -2,7 +2,6 @@ class FapiisScraper
   require_relative 'browser.rb'
 
   def self.scrape(duns)
-    # duns = "927755033"
     results = {}
 
     session = Browser.new(:chrome)
